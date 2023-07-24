@@ -51,11 +51,17 @@ h1n1_svc_pipeline = Pipeline([
     ('preprocessing', preprocessing),
     ('model', SVC())
 ])
+seasonal_svc_pipeline = Pipeline([
+    ('preprocessing', preprocessing),
+    ('model', SVC())
+])
 
 # Train model
-print('Training model...')
+print('Training models...')
 h1n1_svc_pipeline.fit(X_train, y_train['h1n1_vaccine'])
+seasonal_svc_pipeline.fit(X_train, y_train['seasonal_vaccine'])
 
 # Evaluate model
-print('Evaluating model...')
-score = evaluate(h1n1_svc_pipeline, 'h1n1_vaccine', X_test, y_test)
+print('Evaluating models...')
+score_h1n1 = evaluate(h1n1_svc_pipeline, 'h1n1_vaccine', X_test, y_test)
+score_seasonal = evaluate(seasonal_svc_pipeline, 'seasonal_vaccine', X_test, y_test)

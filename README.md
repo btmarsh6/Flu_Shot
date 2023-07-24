@@ -59,7 +59,12 @@ child_under_6_months - Has regular close contact with a child under the age of s
 
 
 ## Process
+I began with some data cleaning and exploratory data analysis. The employment_industry, employment_occupation, and health_insurance features had missing values for nearly half the observations, so I dropped those columns from the dataset. I then dropped remaining null values. This brought the training data down from 26,707 observations to 19,642.
+
+I then created a pipeline to build my model. I applied a MinMax Scaler to all numeric features to bring them into the same range, then used One Hot Encoding on the categorical variables.
+My initial model used a Support Vector Machines Classifier.
 
 ## Results
+My initial model gave an AUC-ROC score of .707 for predicting whether or not a person has received the H1N1 vaccine and a score of .777 for the seasonal vaccine.
 
 ## Challenges
