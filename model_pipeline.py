@@ -6,6 +6,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 from helper_functions import evaluate
 from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
 
 # Import training data.
 print('Importing data...')
@@ -48,7 +49,8 @@ preprocessing = ColumnTransformer([
 
 h1n1_svc_pipeline = Pipeline([
     ('preprocessing', preprocessing),
-    ('model', SVC(C=1, gamma='auto'))
+    ('model', GaussianNB())
+    # ('model', SVC(C=1, gamma='auto'))
 ])
 seasonal_svc_pipeline = Pipeline([
     ('preprocessing', preprocessing),

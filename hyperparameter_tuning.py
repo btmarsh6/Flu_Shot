@@ -6,6 +6,7 @@ from sklearn.compose import ColumnTransformer
 from sklearn.preprocessing import OneHotEncoder, MinMaxScaler
 from helper_functions import evaluate
 from sklearn.svm import SVC
+from sklearn.naive_bayes import GaussianNB
 
 
 # Import training data.
@@ -47,22 +48,24 @@ preprocessing = ColumnTransformer([
     ('categorical', categorical_transform, cat_features)
 ])
 
-h1n1_svc_pipeline = Pipeline([
+h1n1_gnb_pipeline = Pipeline([
     ('preprocessing', preprocessing),
-    ('model', SVC())
+    ('model', GaussianNB())
 ])
 seasonal_svc_pipeline = Pipeline([
     ('preprocessing', preprocessing),
     ('model', SVC())
 ])
 
-param_grid = {'model__C': [.75, 1, 1.25],
-              'model__gamma': ['scale', 'auto', 1]
+gnb_param_grid = {'model__var_smoothing': np.logspace(0,-9, num=100)}
+
+svc_param_grid = {'model__C': [.75, 1, 1.25],
+              'model__gamma': [.01, .03, .07]
               }
 
 # Hyperparameter tuning
-h1n1_grid = GridSearchCV(h1n1_svc_pipeline, param_grid=param_grid, verbose=10, scoring='roc_auc')
-seasonal_grid = GridSearchCV(seasonal_svc_pipeline, param_grid=param_grid, verbose=10, scoring='roc_auc')
+h1n1_grid = GridSearchCV(h1n1_gnb_pipeline, param_grid=gnb_param_grid, verbose=10, scoring='roc_auc')
+seasonal_grid = GridSearchCV(seasonal_svc_pipeline, param_grid=svc_param_grid, verbose=10, scoring='roc_auc')
 
 
 # Train model
@@ -75,6 +78,6 @@ print('Evaluating models...')
 score_h1n1 = evaluate(h1n1_grid, 'h1n1_vaccine', X_test, y_test)
 score_seasonal = evaluate(seasonal_grid, 'seasonal_vaccine', X_test, y_test)
 
-h1n1_best_params = h1n1_grid.get_params()
-seasonal_best_params = seasonal_grid.get_params()
+h1n1_best_params = h1n1_grid.get_params()['estimator__model__var_smoothing']
+seasonal_best_params = seasonal_grid.get_params()['estimator__model_C']
 print(f'Best parameters for h1n1 model: {h1n1_best_params}\nBest parameters for seasonal model: {seasonal_best_params}')
