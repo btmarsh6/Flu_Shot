@@ -15,7 +15,7 @@ training_data = pd.read_csv('data/training_set_features.csv', index_col='respond
 training_labels = pd.read_csv('data/training_set_labels.csv', index_col='respondent_id')
 
 print('Cleaning data...')
-traing_data = clean_data(training_data)
+training_data = clean_data(training_data)
 
 # Drop corresponding rows from training labels.
 mask = training_labels.index.isin(training_data.index)
@@ -31,6 +31,8 @@ X_train, X_test, y_train, y_test = train_test_split(training_data, clean_labels,
 
 # Build Pipeline
 print('Building pipeline...')
+
+
 numeric_transform = Pipeline([
     ('scaler', MinMaxScaler())
 ])
@@ -50,7 +52,7 @@ h1n1_gnb_pipeline = Pipeline([
 ])
 seasonal_svc_pipeline = Pipeline([
     ('preprocessing', preprocessing),
-    ('model', SVC(C=1, gamma='auto'))
+    ('model', SVC(C=1, gamma='auto', probability=True))
 ])
 
 # Train model
@@ -60,18 +62,18 @@ seasonal_svc_pipeline.fit(X_train, y_train['seasonal_vaccine'])
 
 # Evaluate model
 print('Evaluating models...')
-score_h1n1 = evaluate(h1n1_svc_pipeline, 'h1n1_vaccine', X_test, y_test)
+score_h1n1 = evaluate(h1n1_gnb_pipeline, 'h1n1_vaccine', X_test, y_test)
 score_seasonal = evaluate(seasonal_svc_pipeline, 'seasonal_vaccine', X_test, y_test)
 
 # Save models
 save_h1n1_model = input('Would you like to save the H1N1 model? (y/n)')
-if save_h1n1_model == y:
+if save_h1n1_model == 'y':
     h1n1_filename = input('Enter filename for model: ')
     pickle.dump(h1n1_gnb_pipeline, open(h1n1_filename, 'wb'))
     print('File saved!')
 
 save_seasonal_model = input('Would you like to save the seasonal model? (y/n)')
-if save_seasonal_model == y:
+if save_seasonal_model == 'y':
     seasonal_filename = input('Enter filename for model: ')
     pickle.dump(seasonal_svc_pipeline, open(seasonal_filename, 'wb'))
     print('File saved!')

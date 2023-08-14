@@ -63,10 +63,16 @@ I began with some data cleaning and exploratory data analysis. The employment_in
 
 I then created a pipeline to build my model. I applied a MinMax Scaler to all numeric features to bring them into the same range, then used One Hot Encoding on the categorical variables.
 
-I tried a few different algorithms for predicting both H1N1 and Seasonal vaccine uptake. I found a Gaussian Naive Bayes classifier to give the best results for H1N1 and a Support Vector Machine Classifier to be best for the seasonal vaccine.
+I tried a few different algorithms for predicting both H1N1 and Seasonal vaccine uptake. I found a Gaussian Naive Bayes classifier to give the best results for H1N1 and a Support Vector Machine Classifier to be best for the seasonal vaccine. Once these models were selected, I used a grid search with cross validation to tune the hyperparameters to further improve performance. These models performed with ROC-AUC scores of .724 and .784 respectively.
+
+After getting these results, I also went back and used a KNN Imputer to impute missing values instead of dropping those observations. Imputing the values resulted in a lower ROC-AUC score for both models.
+
+At this point, I realized the submission guidelines required all observations from the test data, so I could not use a process that involved dropping columns. I redid the process to use the XGBoost model, which can handle null values. This resulted in a significant boost in model performance for both models.
+
+
 
 ## Results
 |Vaccine|Model|ROC-AUC Score|
 |-------|------|-------------|
-|H1N1  | GaussianNB | .724|
-|Seasonal| SVC | .784|
+|H1N1  | XGBoost | .862|
+|Seasonal| XGBoost | .855|
